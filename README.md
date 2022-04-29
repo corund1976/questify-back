@@ -1,11 +1,19 @@
 # questify-back
 
-Questify project - Backend
+1. Express представляет свой генератор приложений
+   $ npx express-generator --view=ejs my-app
 
-1. В папке с приложением создать package.json
-   $ npm init -y
+2. Внутри папки с приложением установить пакеты, которые входят в базовый набор
+   $ npm i
 
-2. Установить Express
-   $ npm install express
+3. Для режима разработки установить пакет nodemon
+   $ npm i nodemon -D
 
-3. Создать файл с именем app.js
+4. В package.json для запуска приложения в режиме разработки добавить скрипт start:dev
+   "scripts": {
+   "start": "node ./bin/www",
+   "start:dev": "nodemon ./bin/www"
+   },
+
+5. Запуск приложения в режиме разработке будет следующим
+   $ npm run start:dev

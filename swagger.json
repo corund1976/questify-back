@@ -99,8 +99,6 @@
         }
       }
     },
-
-
     "/api/users/refresh": {
       "post": {
         "tags": ["Auth"],
@@ -119,7 +117,7 @@
             }
           },
           "401": {
-            "description": "UnauthorizedError",
+            "description": "Unauthorized Error",
             "content": {}
           }
         }
@@ -148,7 +146,6 @@
         }
       }
     },
-
     "/api/users/change-password/:link": {
       "post": {
         "tags": ["Auth"],

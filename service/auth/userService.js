@@ -1,17 +1,19 @@
-const UserModel = require("../../models/auth/userModel");
-const TokenModel = require("../../models/auth/tokenModel");
 const bcrypt = require("bcrypt");
 const uuid = require("uuid");
+const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
-const tokenService = require("./tokenService");
+
+const UserModel = require("../../models/auth/userModel");
+const TokenModel = require("../../models/auth/tokenModel");
+
+const tokenService = require("../auth/tokenService");
 const UserDto = require("../../dtos/user-dto");
 const ApiError = require("../auth/apiError");
-const jwt = require("jsonwebtoken");
 const {
   confirmEmail,
   forgotPasswordEmail,
   checkNewHostEmail,
-} = require("./mailService");
+} = require("../auth/mailService");
 
 class UserService {
   async registration(name, email, password, host) {
@@ -39,7 +41,7 @@ class UserService {
 
     const msg = {
       to: email,
-      from: "maintenance.questify@gmail.com",
+      from: process.env.SENDGRID_SENDER_EMAIL,
       subject: "Please, confirm Your Email!",
       text: `Here is Your verification link - ${process.env.API_URL}/api/users/activate/${activationLink}`,
       html: mail,
@@ -90,12 +92,12 @@ class UserService {
 
       const confirm = jwt.sign(
         `${email}-confirm`,
-        process.env.CONFIRM_HOST_SECRET
+        process.env.JWT_CONFIRM_HOST_SECRET
       );
 
       const decline = jwt.sign(
         `${email}-decline`,
-        process.env.CONFIRM_HOST_SECRET
+        process.env.JWT_CONFIRM_HOST_SECRET
       );
 
       const mail = checkNewHostEmail(
@@ -162,7 +164,7 @@ class UserService {
 
     const msg = {
       to: email,
-      from: "maintenance.questify@gmail.com",
+      from: process.env.SENDGRID_SENDER_EMAIL,
       subject: "Reset Password!",
       text: `Here is Your verification link - ${process.env.CLIENT_URL}/api/users/change-password/${resetLink}`,
       html: mail,
@@ -186,7 +188,7 @@ class UserService {
   }
 
   async confirmNewHost(link) {
-    const confirmation = jwt.decode(link, process.env.AGREE_SECRET);
+    const confirmation = jwt.decode(link, process.env.JWT_AGREE_SECRET);
     const email = confirmation.split("-")[0];
     const answer = confirmation.split("-")[1];
     console.log("email", email);

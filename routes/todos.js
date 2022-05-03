@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
+
+const userAuthorization = require('../middlewares/userAuthorization');
+const { todoValidation } = require('../middlewares/validator');
 const todosController = require('../controllers/todoController');
-const auth = require('../middlewares/auth/authMiddleware');
+
 /*
 + 8. Реализовать энд-поинт создания карточки 
 + 9. Реализовать энд-поинт редактирования карточки
@@ -28,13 +31,13 @@ router.get('/', function (req, res, next) {
   res.send('Please use /active or  /completed or /all to get respective set of cards.');
 });
 
-router.get('/all', auth, todosController.getAllTodos);
-router.get('/active', auth, todosController.getActiveTodos);
-router.get('/completed', auth, todosController.getCompletedTodos);
+router.get('/all', userAuthorization, todosController.getAllTodos);
+router.get('/active', userAuthorization, todosController.getActiveTodos);
+router.get('/completed', userAuthorization, todosController.getCompletedTodos);
 
-router.post('/add', auth, todosController.addTodo);
-router.put('/update/:todoId', auth, todosController.updateTodo);
-router.patch('/status/:todoId', auth, todosController.setStatusTodo);
-router.delete('/remove/:todoId', auth, todosController.removeTodo);
+router.post('/add', userAuthorization, todoValidation, todosController.addTodo);
+router.put('/update/:todoId', userAuthorization, todoValidation, todosController.updateTodo);
+router.patch('/status/:todoId', userAuthorization, todosController.setStatusTodo);
+router.delete('/remove/:todoId', userAuthorization, todosController.removeTodo);
 
 module.exports = router;

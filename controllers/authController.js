@@ -1,13 +1,13 @@
-const userService = require("../../service/auth/userService");
-const ApiError = require("../../service/auth/apiError");
+const userService = require("../service/auth/userService");
 
 class UserController {
   async registration(req, res, next) {
     try {
       const { name, email, password } = req.body;
 
-      const ip = req.headers.hrmt;
-      const host = Buffer.from(ip, "base64").toString();
+      // const ip = req.headers.hrmt;
+      // const host = Buffer.from(ip, "base64").toString();
+      const host = req.headers.host;
 
       const userData = await userService.registration(
         name,
@@ -15,10 +15,12 @@ class UserController {
         password,
         host
       );
+
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
+
       return res.status(201).json(userData);
     } catch (e) {
       next(e);
@@ -29,15 +31,17 @@ class UserController {
     try {
       const { email, password } = req.body;
 
-      const ip = req.headers.hrmt;
-      const host = Buffer.from(ip, "base64").toString();
+      // const ip = req.headers.hrmt;
+      // const host = Buffer.from(ip, "base64").toString();
+      const host = req.headers.host;
 
-      console.log("host", host);
       const userData = await userService.login(email, password, host);
+
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
+
       return res.json(userData);
     } catch (e) {
       next(e);

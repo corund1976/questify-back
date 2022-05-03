@@ -8,7 +8,7 @@ const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
-const authErrorMiddleware = require('./middlewares/auth/authErrorMiddleware');
+const authErrorHandler = require('./middlewares/authErrorHandler');
 
 const indexRouter = require('./routes/index');
 const todosRouter = require('./routes/todos');
@@ -54,7 +54,7 @@ app.use(cors({
 
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
-app.use(authErrorMiddleware);
+app.use(authErrorHandler);
 
 app.use('/api/todos', todosRouter);
 

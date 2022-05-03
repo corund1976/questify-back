@@ -1,8 +1,8 @@
-const { joiTodoSchema } = require("../models/todoModel");
 const services = require("../service/todoService");
 
 function getAllTodos(req, res) {
   const { id: owner } = req.user;
+
   services.getAll({ owner }).then((result) => {
     return res.status(200).json(result);
   });
@@ -10,6 +10,7 @@ function getAllTodos(req, res) {
 
 function getActiveTodos(req, res) {
   const { id: owner } = req.user;
+
   services.getActive({ owner, isActive: "true" }).then((result) => {
     return res.status(200).json(result);
   });
@@ -17,6 +18,7 @@ function getActiveTodos(req, res) {
 
 function getCompletedTodos(req, res) {
   const { id: owner } = req.user;
+
   services.getCompleted({ owner, isActive: "false" }).then((result) => {
     return res.status(200).json(result);
   });
@@ -31,10 +33,7 @@ async function addTodo(req, res) {
     //       isActive: req.body.isActive ? "true" : "false",
     level: req.body.level,
   };
-  const { error } = joiTodoSchema.validate(newTodo);
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
+
   const result = await services.add({ ...newTodo, owner: req.user.id });
 
   return res.status(201).json({ result });
@@ -51,10 +50,6 @@ async function updateTodo(req, res) {
     isActive: req.body.isActive ? true : false,
     level: req.body.level,
   };
-  const { error } = joiTodoSchema.validate(todo);
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
 
   const result = await services.update(id, owner, { ...todo, owner });
 
@@ -64,13 +59,14 @@ async function updateTodo(req, res) {
 async function setStatusTodo(req, res) {
   const { id: owner } = req.user;
   const id = req.params.todoId;
-  const isActive = {
-    isActive: req.body.isActive,
-  };
+  const isActive = { isActive: req.body.isActive };
+
   if (typeof isActive.isActive !== "boolean") {
     return res.status(400).json({ message: "Missing field isActive" });
   }
+
   const result = await services.updateStatus(id, owner, isActive);
+
   return result ? res.status(201).json({ result }) : res.status(404).json({ message: `Todo with id:${id} not found` });
 }
 

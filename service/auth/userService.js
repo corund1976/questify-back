@@ -18,12 +18,16 @@ const {
 class UserService {
   async registration(name, email, password, host) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
     const candidate = await UserModel.findOne({ email });
+
     if (candidate) {
       throw ApiError.Conflict(`Email ${email} in use!`);
     }
+
     const hashPassword = await bcrypt.hash(password, 10);
     const activationLink = uuid.v4(); // v34fa-asfasf-142saf-sa-asf
+
     console.log("host", host);
 
     const user = await UserModel.create({
@@ -73,11 +77,15 @@ class UserService {
 
   async login(email, password, host) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
     const user = await UserModel.findOne({ email });
+
     if (!user) {
       throw ApiError.Forbidden(`User with email ${email} not found!`);
     }
+
     const isPassEquals = await bcrypt.compare(password, user.password);
+
     if (!isPassEquals) {
       throw ApiError.Forbidden("Wrong password!");
     }

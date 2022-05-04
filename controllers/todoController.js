@@ -53,7 +53,9 @@ async function updateTodo(req, res) {
 
   const result = await services.update(id, owner, { ...todo, owner });
 
-  return result ? res.status(201).json({ result }) : res.status(404).json({ message: `Todo with id:${id} not found` });
+  return result
+    ? res.status(201).json({ result })
+    : res.status(404).json({ message: `Todo with id:${id} not found` });
 }
 
 async function setStatusTodo(req, res) {
@@ -74,9 +76,10 @@ async function removeTodo(req, res) {
   const { id: owner } = req.user;
   const id = req.params.todoId;
   const removedTodoById = await services.remove(id, owner);
+
   return removedTodoById
-    ? res.status(200).json({ message: `Todo with id:${id} removed successfully.` })
-    : res.status(404).json({ message: `Todo with id:${id} not found.` });
+    ? res.status(200).json({ message: `Todo with id:${id} removed successfully` })
+    : res.status(404).json({ message: `Todo with id:${id} not found` });
 }
 
 module.exports = { getAllTodos, getActiveTodos, getCompletedTodos, addTodo, updateTodo, setStatusTodo, removeTodo };

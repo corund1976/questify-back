@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
-const uuid = require("uuid");
 const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
+const uuid = require("uuid");
 
 const UserModel = require("../../models/auth/userModel");
 const TokenModel = require("../../models/auth/tokenModel");
@@ -119,14 +119,14 @@ class UserService {
         subject: "New IP!",
         text: `We detected autorize in your account from new IP. <a href="${process.env.API_URL}/api/users/confirm-new-host/${confirm}">It was Me!</a> or <a href="${process.env.API_URL}/api/users/confirm-new-host/${decline}">I didn't autorize, logout and change password!</a>`,
         html: mail,
-      };
+      }
 
       await sgMail.send(msg);
     }
 
     const userDto = new UserDto(user);
     const tokens = tokenService.generateTokens({ ...userDto });
-    console.log("tokens", tokens);
+    // console.log("tokens", tokens);
 
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
     return { ...tokens, user: userDto };
@@ -134,19 +134,22 @@ class UserService {
 
   async logout(refreshToken) {
     const token = await tokenService.removeToken(refreshToken);
+
     return token;
   }
 
   async refresh(refreshToken) {
-    console.log("refreshToken", refreshToken);
     if (!refreshToken) {
       throw ApiError.UnauthorizedError();
     }
+
     const userData = tokenService.validateRefreshToken(refreshToken);
     const tokenFromDb = await tokenService.findToken(refreshToken);
+
     if (!userData || !tokenFromDb) {
       throw ApiError.UnauthorizedError();
     }
+
     const user = await UserModel.findById(userData.id);
     const userDto = new UserDto(user);
     const tokens = tokenService.generateTokens({ ...userDto });

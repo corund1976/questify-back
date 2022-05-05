@@ -41,3 +41,5 @@
    └── layout.pug
 
 7 directories, 9 files
+
+8. Деплой на Heroku

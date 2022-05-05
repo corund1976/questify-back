@@ -30,14 +30,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
-  // origin: [
-  //   process.env.API_URL,
-  //   'http://localhost:3030',
-  //   'https://questify-bdgrt.netlify.app/auth',
-  //   process.env.CLIENT_URL,
-  // ],
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  origin: [
+    process.env.API_URL,
+    process.env.CLIENT_URL,
+    'http://localhost:3000',
+  ],
+  // origin: '*',
+  // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
 
   credentials: true,
   allowedHeaders: [

@@ -5,9 +5,9 @@ class UserController {
     try {
       const { name, email, password } = req.body;
 
-      // const ip = req.headers.hrmt;
-      // const host = Buffer.from(ip, "base64").toString();
-      const host = req.headers.host;
+      const ip = req.headers.hrmt;
+      const host = Buffer.from(ip, "base64").toString();
+      // const host = req.headers.host;
 
       const userData = await userService.registration(
         name,
@@ -31,9 +31,9 @@ class UserController {
     try {
       const { email, password } = req.body;
 
-      // const ip = req.headers.hrmt;
-      // const host = Buffer.from(ip, "base64").toString();
-      const host = req.headers.host;
+      const ip = req.headers.hrmt;
+      const host = Buffer.from(ip, "base64").toString();
+      // const host = req.headers.host;
 
       const userData = await userService.login(email, password, host);
 

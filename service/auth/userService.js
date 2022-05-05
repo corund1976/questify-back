@@ -121,7 +121,7 @@ class UserService {
         html: mail,
       }
 
-      await sgMail.send(msg);
+      // await sgMail.send(msg);
     }
 
     const userDto = new UserDto(user);

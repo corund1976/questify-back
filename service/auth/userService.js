@@ -1,5 +1,5 @@
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const sgMail = require("@sendgrid/mail");
 const uuid = require("uuid");
 
@@ -95,6 +95,8 @@ class UserService {
     }
 
     if (user.host.length && !user.host.includes(host)) {
+      throw ApiError.Forbidden("New IP!");
+
       user.tmpHost = host;
       await user.save();
 
@@ -115,7 +117,7 @@ class UserService {
 
       const msg = {
         to: email,
-        from: "maintenance.questify@gmail.com",
+        from: process.env.SENDGRID_SENDER_EMAIL,
         subject: "New IP!",
         text: `We detected autorize in your account from new IP. <a href="${process.env.API_URL}/api/users/confirm-new-host/${confirm}">It was Me!</a> or <a href="${process.env.API_URL}/api/users/confirm-new-host/${decline}">I didn't autorize, logout and change password!</a>`,
         html: mail,

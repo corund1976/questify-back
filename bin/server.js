@@ -5,7 +5,7 @@ const app = require('../app');
 
 const PORT = process.env.PORT || 3000;
 const { MONGODB_USERNAME, MONGODB_PASSWORD, MONGODB_HOST, MONGODB_DATABASE } = process.env;
-const DB_HOST_REMOTE = `mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}/${MONGODB_DATABASE}?retryWrites=true&w=majority` || 'mongodb + srv://corund:corund123456@cluster0.zeqag.mongodb.net/db-questify?retryWrites=true&w=majority';
+const DB_HOST_REMOTE = `mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}/${MONGODB_DATABASE}?retryWrites=true&w=majority` || 'mongodb+srv://corund:corund123456@cluster0.zeqag.mongodb.net/db-questify?retryWrites=true&w=majority';
 
 try {
   const session = mongoose.connect(DB_HOST_REMOTE);

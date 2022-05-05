@@ -43,3 +43,4 @@
 7 directories, 9 files
 
 8. Деплой на Heroku
+   git push heroku main

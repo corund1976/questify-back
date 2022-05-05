@@ -95,8 +95,6 @@ class UserService {
     }
 
     if (user.host.length && !user.host.includes(host)) {
-      throw ApiError.Forbidden("New IP!");
-
       user.tmpHost = host;
       await user.save();
 
@@ -131,6 +129,8 @@ class UserService {
     // console.log("tokens", tokens);
 
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
+    throw ApiError.Forbidden("userDto.id, tokens.refreshToken", userDto.id);
+
     return { ...tokens, user: userDto };
   }
 

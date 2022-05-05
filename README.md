@@ -43,4 +43,6 @@
 7 directories, 9 files
 
 8. Деплой на Heroku
+   git add .
+   git commit -am "fix: sendgrid new IP"
    git push heroku main

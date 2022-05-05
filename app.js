@@ -33,11 +33,8 @@ app.use(cors({
   origin: [
     process.env.API_URL,
     process.env.CLIENT_URL,
-    'http://localhost:3000',
+    process.env.CLIENT_URL_LOCAL,
   ],
-  // origin: '*',
-  // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-
   credentials: true,
   allowedHeaders: [
     'Content-Type',

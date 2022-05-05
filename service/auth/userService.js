@@ -129,8 +129,6 @@ class UserService {
     // console.log("tokens", tokens);
 
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
-    throw ApiError.Forbidden("userDto.id, tokens.refreshToken", userDto.id);
-
     return { ...tokens, user: userDto };
   }
 

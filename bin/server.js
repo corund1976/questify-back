@@ -4,11 +4,10 @@ require('dotenv').config();
 const app = require('../app');
 
 const PORT = process.env.PORT || 3000;
-const { MONGODB_USERNAME, MONGODB_PASSWORD, MONGODB_HOST, MONGODB_DATABASE } = process.env;
-const DB_HOST_REMOTE = `mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}/${MONGODB_DATABASE}?retryWrites=true&w=majority`;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 try {
-  const session = mongoose.connect(DB_HOST_REMOTE);
+  const session = mongoose.connect(MONGODB_URI);
   session.then((data) => {
     data.connections[0].name &&
       app.listen(PORT, () => {

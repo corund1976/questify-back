@@ -33,7 +33,6 @@ app.use(cors({
   origin: [
     process.env.API_URL,
     process.env.CLIENT_URL,
-    process.env.CLIENT_URL_LOCAL,
   ],
   credentials: true,
   allowedHeaders: [

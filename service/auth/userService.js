@@ -16,9 +16,7 @@ const {
 } = require("../auth/mailService");
 
 class UserService {
-  async registration(name, email, password, host) {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
+  async signup(name, email, password, host) {
     const candidate = await UserModel.findOne({ email });
 
     if (candidate) {
@@ -46,11 +44,13 @@ class UserService {
     const msg = {
       to: email,
       from: process.env.SENDGRID_SENDER_EMAIL,
-      subject: "Please, confirm Your Email!",
-      text: `Here is Your verification link - ${process.env.API_URL}/api/users/activate/${activationLink}`,
+      subject: "Confirm your Email!",
+      text: `Here is your activation link - 
+        ${process.env.API_URL}/api/users/activate/${activationLink}`,
       html: mail,
     };
 
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     await sgMail.send(msg);
 
     // const userDto = new UserDto(user); // id, email, isActivated
@@ -68,16 +68,17 @@ class UserService {
 
   async activate(activationLink) {
     const user = await UserModel.findOne({ activationLink });
+
     if (!user) {
       throw ApiError.BadRequest("Wrong activation link!");
     }
+
     user.isActivated = true;
+
     await user.save();
   }
 
   async login(email, password, host) {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
     const user = await UserModel.findOne({ email });
 
     if (!user) {
@@ -91,7 +92,7 @@ class UserService {
     }
 
     if (!user.isActivated) {
-      throw ApiError.Forbidden("Not activated account!");
+      throw ApiError.Forbidden(`Account ${email} is not activated yet!`);
     }
 
     if (user.host.length && !user.host.includes(host)) {
@@ -117,11 +118,14 @@ class UserService {
         to: email,
         from: process.env.SENDGRID_SENDER_EMAIL,
         subject: "New IP!",
-        text: `We detected autorize in your account from new IP. <a href="${process.env.API_URL}/api/users/confirm-new-host/${confirm}">It was Me!</a> or <a href="${process.env.API_URL}/api/users/confirm-new-host/${decline}">I didn't autorize, logout and change password!</a>`,
+        text: `We detected autorize in your account from new IP. 
+        <a href="${process.env.API_URL}/api/users/confirm-new-host/${confirm}">It was Me!</a> or 
+        <a href="${process.env.API_URL}/api/users/confirm-new-host/${decline}">I didn't autorize, logout and change password!</a>`,
         html: mail,
       }
 
-      // await sgMail.send(msg);
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+      await sgMail.send(msg);
     }
 
     const userDto = new UserDto(user);
@@ -129,6 +133,7 @@ class UserService {
     // console.log("tokens", tokens);
 
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
     return { ...tokens, user: userDto };
   }
 
@@ -155,17 +160,21 @@ class UserService {
     const tokens = tokenService.generateTokens({ ...userDto });
 
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
     return { ...tokens, user: userDto };
   }
 
-  async resetPasswordRequest(email) {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  async resetPassword(email) {
     const user = await UserModel.findOne({ email });
+
     if (!user) {
       throw ApiError.BadRequest(`User with email: ${email} not found!`);
     }
+
     const resetLink = uuid.v4(); // v34fa-asfasf-142saf-sa-asf
+
     user.resetLink = resetLink;
+
     await user.save();
 
     const mail = forgotPasswordEmail(
@@ -181,12 +190,15 @@ class UserService {
       html: mail,
     };
 
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     await sgMail.send(msg);
+
     return resetLink;
   }
 
   async changePassword(password, resetLink) {
     const user = await UserModel.findOne({ resetLink });
+
     if (!user) {
       throw ApiError.BadRequest("User not found!");
     }
@@ -195,10 +207,11 @@ class UserService {
 
     user.password = hashPassword;
     user.resetLink = null;
+
     await user.save();
   }
 
-  async confirmNewHost(link) {
+  async confirmHost(link) {
     const confirmation = jwt.decode(link, process.env.JWT_AGREE_SECRET);
     const email = confirmation.split("-")[0];
     const answer = confirmation.split("-")[1];
@@ -213,14 +226,20 @@ class UserService {
       console.log("fitokenFromDBrst", tokenFromDB);
       tokenFromDB ? await this.logout(tokenFromDB.refreshToken) : false;
       user.tmpHost = null;
+
       const resetLink = uuid.v4(); // v34fa-asfasf-142saf-sa-asf
+
       user.resetLink = resetLink;
+
       await user.save();
+
       return resetLink;
     }
+
     user.host.push(user.tmpHost);
     user.tmpHost = null;
     user.save();
+
     return null;
   }
 }

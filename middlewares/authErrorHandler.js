@@ -1,4 +1,4 @@
-const ApiError = require("../service/auth/apiError");
+const ApiError = require("../helper/apiError");
 
 module.exports = function (err, req, res, next) {
   console.log("ERRRROORR", err);

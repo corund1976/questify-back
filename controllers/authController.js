@@ -1,6 +1,6 @@
-const userService = require("../service/auth/userService");
+const authService = require("../service/authService");
 
-class UserController {
+class AuthController {
   async signup(req, res, next) {
     try {
       const { name, email, password } = req.body;
@@ -8,7 +8,7 @@ class UserController {
       const host = Buffer.from(ip, "base64").toString();
       // const host = req.headers.host;
 
-      const userData = await userService.signup(
+      const userData = await authService.signup(
         name,
         email,
         password,
@@ -30,7 +30,7 @@ class UserController {
     try {
       const activationLink = req.params.link;
 
-      await userService.activate(activationLink);
+      await authService.activate(activationLink);
 
       return res.redirect(process.env.CLIENT_URL);
     } catch (e) {
@@ -44,7 +44,7 @@ class UserController {
       const ip = req.headers.hrmt;
       const host = Buffer.from(ip, "base64").toString();
       // const host = req.headers.host;
-      const userData = await userService.login(email, password, host);
+      const userData = await authService.login(email, password, host);
 
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -65,7 +65,8 @@ class UserController {
       const refreshToken = req.headers.update.slice(
         req.headers.update.indexOf("=") + 1
       );
-      const token = await userService.logout(refreshToken);
+
+      await authService.logout(refreshToken);
 
       res.clearCookie("refreshToken");
 
@@ -81,7 +82,7 @@ class UserController {
         req.headers.update.indexOf("=") + 1
       );
       // const { refreshToken } = req.cookies;
-      const userData = await userService.refresh(refreshToken);
+      const userData = await authService.refresh(refreshToken);
 
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -96,7 +97,7 @@ class UserController {
 
   async resetPassword(req, res, next) {
     try {
-      const link = await userService.resetPassword(req.body.email);
+      await authService.resetPassword(req.body.email);
       // return res.json({ message: "Please, check your email" });
 
       return res.redirect(`/`);
@@ -109,7 +110,7 @@ class UserController {
     try {
       const resetLink = req.params.link;
 
-      const newPassword = await userService.changePassword(
+      await authService.changePassword(
         req.body.password,
         resetLink
       );
@@ -122,7 +123,7 @@ class UserController {
 
   async confirmHost(req, res, next) {
     try {
-      const result = await userService.confirmHost(req.params.link);
+      const result = await authService.confirmHost(req.params.link);
 
       if (result) {
         console.log("result", result);
@@ -139,4 +140,4 @@ class UserController {
   }
 }
 
-module.exports = new UserController();
+module.exports = new AuthController();

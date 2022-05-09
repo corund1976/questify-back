@@ -1,5 +1,5 @@
 const Todo = require("../models/todoModel");
-const ApiError = require("../service/auth/apiError");
+const ApiError = require("../helper/apiError");
 
 async function getAll(data) {
   try {

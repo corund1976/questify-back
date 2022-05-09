@@ -5,14 +5,15 @@ const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
+
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
 const authErrorHandler = require('./middlewares/authErrorHandler');
 
 const indexRouter = require('./routes/index');
+const authRouter = require('./routes/auth');
 const todosRouter = require('./routes/todos');
-const usersRouter = require('./routes/users');
 
 const app = express();
 
@@ -48,7 +49,7 @@ app.use(cors({
 }));
 
 app.use('/', indexRouter);
-app.use('/api/users', usersRouter);
+app.use('/api/users', authRouter);
 app.use(authErrorHandler);
 
 app.use('/api/todos', todosRouter);

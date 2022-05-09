@@ -3,19 +3,19 @@ const bcrypt = require("bcrypt");
 const sgMail = require("@sendgrid/mail");
 const uuid = require("uuid");
 
-const UserModel = require("../../models/auth/userModel");
-const TokenModel = require("../../models/auth/tokenModel");
+const UserModel = require("../models/userModel");
+const TokenModel = require("../models/tokenModel");
 
-const tokenService = require("../auth/tokenService");
-const UserDto = require("../../dtos/user-dto");
-const ApiError = require("../auth/apiError");
+const UserDto = require("../dtos/user-dto");
+const ApiError = require("../helper/apiError");
+const tokenService = require("./tokenService");
 const {
   confirmEmail,
   forgotPasswordEmail,
   checkNewHostEmail,
-} = require("../auth/mailService");
+} = require("../helper/mailService");
 
-class UserService {
+class AuthService {
   async signup(name, email, password, host) {
     const candidate = await UserModel.findOne({ email });
 
@@ -130,7 +130,6 @@ class UserService {
 
     const userDto = new UserDto(user);
     const tokens = tokenService.generateTokens({ ...userDto });
-    // console.log("tokens", tokens);
 
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
 
@@ -244,4 +243,4 @@ class UserService {
   }
 }
 
-module.exports = new UserService();
+module.exports = new AuthService();

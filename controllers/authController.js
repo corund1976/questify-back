@@ -132,7 +132,7 @@ class AuthController {
       if (result) {
         console.log("result", result);
         return res.redirect(
-          `${process.env.CLIENT_URL}/api/users/change-password/${result}`
+          `${process.env.API_URL}/api/users/change-password/${result}`
         );
       }
 

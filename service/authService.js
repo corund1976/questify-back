@@ -32,7 +32,6 @@ class AuthService {
       host,
     });
 
-    console.log('user', user);
     const TO_ADDRESS = email;
     const FROM_NAME = 'Questify Support Team'
     const FROM_ADDRESS = process.env.SENDGRID_SENDER_EMAIL;
@@ -63,8 +62,6 @@ class AuthService {
       }
     };
 
-    console.log('msg', msg);
-
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     await sgMail.send(msg);
 
@@ -84,9 +81,7 @@ class AuthService {
   async activate(activationLink) {
     const user = await UserModel.findOne({ activationLink });
 
-    if (!user) {
-      throw ApiError.BadRequest("Wrong activation link!");
-    }
+    if (!user) throw ApiError.BadRequest("Wrong activation link!");
 
     user.isActivated = true;
 
@@ -181,9 +176,7 @@ class AuthService {
   async resetPassword(email) {
     const user = await UserModel.findOne({ email });
 
-    if (!user) {
-      throw ApiError.BadRequest(`User with email: ${email} not found!`);
-    }
+    if (!user) throw ApiError.BadRequest(`User with email: ${email} not found!`);
 
     const resetLink = uuid.v4(); // v34fa-asfasf-142saf-sa-asf
 
@@ -213,9 +206,7 @@ class AuthService {
   async changePassword(password, resetLink) {
     const user = await UserModel.findOne({ resetLink });
 
-    if (!user) {
-      throw ApiError.BadRequest("User not found!");
-    }
+    if (!user) throw ApiError.BadRequest("User not found!");
 
     const hashPassword = await bcrypt.hash(password, 10);
 

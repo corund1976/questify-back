@@ -62,9 +62,11 @@ class AuthController {
       // const refreshToken = req.headers.cookie.slice(
       //   req.headers.cookie.indexOf("=") + 1
       // );
-      const refreshToken = req.headers.update.slice(
-        req.headers.update.indexOf("=") + 1
-      );
+      const refreshToken = req.headers.update;
+      console.log('refreshToken', refreshToken);
+      // const refreshToken = req.headers.update.slice(
+      //   req.headers.update.indexOf("=") + 1
+      // );
 
       await authService.logout(refreshToken);
 
@@ -78,9 +80,11 @@ class AuthController {
 
   async refresh(req, res, next) {
     try {
-      const refreshToken = req.headers.update.slice(
-        req.headers.update.indexOf("=") + 1
-      );
+      console.log('controllers * authController.js:81 req.headers.update', req.headers.update);
+      const refreshToken = req.headers.update;
+      // const refreshToken = req.headers.update.slice(
+      //   req.headers.update.indexOf("=") + 1
+      // );
       // const { refreshToken } = req.cookies;
       const userData = await authService.refresh(refreshToken);
 

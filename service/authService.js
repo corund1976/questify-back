@@ -19,14 +19,10 @@ class AuthService {
   async signup(name, email, password, host) {
     const candidate = await UserModel.findOne({ email });
 
-    if (candidate) {
-      throw ApiError.Conflict(`Email ${email} in use!`);
-    }
+    if (candidate) throw ApiError.Conflict(`Email ${email} in use!`);
 
     const hashPassword = await bcrypt.hash(password, 10);
     const activationLink = uuid.v4(); // v34fa-asfasf-142saf-sa-asf
-
-    console.log("host", host);
 
     const user = await UserModel.create({
       name,
@@ -36,19 +32,38 @@ class AuthService {
       host,
     });
 
-    const mail = confirmEmail(
+    console.log('user', user);
+    const TO_ADDRESS = email;
+    const FROM_NAME = 'Questify Support Team'
+    const FROM_ADDRESS = process.env.SENDGRID_SENDER_EMAIL;
+    const SUBJECT = 'Confirm your Email!';
+    const TEXT_VERSION = `Here is your activation link - ${process.env.API_URL}/api/users/activate/${activationLink}`;
+    const HTML_VERSION = confirmEmail(
       `${process.env.API_URL}/api/users/activate/${activationLink}`,
       name
     );
 
     const msg = {
-      to: email,
-      from: process.env.SENDGRID_SENDER_EMAIL,
-      subject: "Confirm your Email!",
-      text: `Here is your activation link - 
-        ${process.env.API_URL}/api/users/activate/${activationLink}`,
-      html: mail,
+      to: TO_ADDRESS,
+      from: {
+        name: FROM_NAME,
+        email: FROM_ADDRESS,
+      },
+      subject: SUBJECT,
+      text: TEXT_VERSION,
+      html: HTML_VERSION,
+      trackingSettings: {
+        clickTracking: {
+          enable: false,
+          enableText: false
+        },
+        openTracking: {
+          enable: false
+        }
+      }
     };
+
+    console.log('msg', msg);
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     await sgMail.send(msg);
@@ -81,19 +96,13 @@ class AuthService {
   async login(email, password, host) {
     const user = await UserModel.findOne({ email });
 
-    if (!user) {
-      throw ApiError.Forbidden(`User with email ${email} not found!`);
-    }
+    if (!user) throw ApiError.Forbidden(`User with email ${email} not found!`);
 
     const isPassEquals = await bcrypt.compare(password, user.password);
 
-    if (!isPassEquals) {
-      throw ApiError.Forbidden("Wrong password!");
-    }
+    if (!isPassEquals) throw ApiError.Forbidden("Wrong password!");
 
-    if (!user.isActivated) {
-      throw ApiError.Forbidden(`Account ${email} is not activated yet!`);
-    }
+    if (!user.isActivated) throw ApiError.Forbidden(`Account ${email} is not activated yet!`);
 
     if (user.host.length && !user.host.includes(host)) {
       user.tmpHost = host;
@@ -143,14 +152,20 @@ class AuthService {
   }
 
   async refresh(refreshToken) {
+    console.log('service\authService.js:146 REFRESHTOKEN', refreshToken);
+
     if (!refreshToken) {
+      console.log('service\authService.js:147 NO REFRESHTOKEN');
       throw ApiError.UnauthorizedError();
     }
 
     const userData = tokenService.validateRefreshToken(refreshToken);
+    console.log('service\authService.js:152 userData =', userData);
     const tokenFromDb = await tokenService.findToken(refreshToken);
+    console.log('service\authService.js:154 tokenFromDb =', tokenFromDb);
 
     if (!userData || !tokenFromDb) {
+      console.log('service\authService.js:157 NO userData OR NO tokenFromDb');
       throw ApiError.UnauthorizedError();
     }
 

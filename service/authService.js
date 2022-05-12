@@ -51,16 +51,7 @@ class AuthService {
       subject: SUBJECT,
       text: TEXT_VERSION,
       html: HTML_VERSION,
-      // trackingSettings: {
-      //   clickTracking: {
-      //     enable: false,
-      //     enableText: false
-      //   },
-      //   openTracking: {
-      //     enable: false
-      //   }
-      // }
-    };
+    }
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     await sgMail.send(msg);
@@ -113,19 +104,27 @@ class AuthService {
         process.env.JWT_CONFIRM_HOST_SECRET
       );
 
-      const mail = checkNewHostEmail(
-        `${process.env.API_URL}/api/users/confirm-new-host/${confirm}`,
-        `${process.env.API_URL}/api/users/confirm-new-host/${decline}`
+      const TO_ADDRESS = email;
+      const FROM_NAME = 'Questify Support Team'
+      const FROM_ADDRESS = process.env.SENDGRID_SENDER_EMAIL;
+      const SUBJECT = 'New IP!';
+      const TEXT_VERSION = `We detected autorize in your account from new IP. 
+        <a href="${process.env.API_URL}/api/users/confirm-host/${confirm}">It was Me!</a> or 
+        <a href="${process.env.API_URL}/api/users/confirm-host/${decline}">I didn't autorize, logout and change password!</a>`;
+      const HTML_VERSION = checkNewHostEmail(
+        `${process.env.API_URL}/api/users/confirm-host/${confirm}`,
+        `${process.env.API_URL}/api/users/confirm-host/${decline}`
       );
 
       const msg = {
-        to: email,
-        from: process.env.SENDGRID_SENDER_EMAIL,
-        subject: "New IP!",
-        text: `We detected autorize in your account from new IP. 
-        <a href="${process.env.API_URL}/api/users/confirm-new-host/${confirm}">It was Me!</a> or 
-        <a href="${process.env.API_URL}/api/users/confirm-new-host/${decline}">I didn't autorize, logout and change password!</a>`,
-        html: mail,
+        to: TO_ADDRESS,
+        from: {
+          name: FROM_NAME,
+          email: FROM_ADDRESS,
+        },
+        subject: SUBJECT,
+        text: TEXT_VERSION,
+        html: HTML_VERSION,
       }
 
       sgMail.setApiKey(process.env.SENDGRID_API_KEY);

@@ -149,15 +149,22 @@ const confirmEmail = (link, name) => {
     <tbody>
       <tr>
         <td style="padding:18px 0px 18px 0px; line-height:22px; text-align:inherit;" height="100%" valign="top" bgcolor="" role="module-content">
-        <div>
-          <div style="font-family: inherit; text-align: center">
-            <em>
-              <strong>
-                Hi, ${name}! Thanks for your registration!
-              </strong>
-            </em>
+          <div>
+            <div style="font-family: inherit; text-align: center">
+              <em>
+                <strong>
+                  Hi, ${name}! Thanks for your registration!
+                </strong>
+              </em>
+            </div>
+            <div style="font-family: inherit; text-align: center">
+              <span style="color: #000000; font-family: arial, helvetica, sans-serif; font-size: 14px; font-style: italic; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 700; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; white-space: pre-wrap; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline">
+                Just one last step is confirm your Email!
+              </span>
+            </div>
+            <div></div>
           </div>
-        <div style="font-family: inherit; text-align: center"><span style="color: #000000; font-family: arial, helvetica, sans-serif; font-size: 14px; font-style: italic; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 700; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; white-space: pre-wrap; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline">Just one last step is confirm your Email!)</span>&nbsp;</div><div></div></div></td>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -279,8 +286,9 @@ const confirmEmail = (link, name) => {
 };
 
 const forgotPasswordEmail = (link, name) => {
-  return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html data-editor-version="2" class="sg-campaigns" xmlns="http://www.w3.org/1999/xhtml">
+  return `
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <html data-editor-version="2" class="sg-campaigns" xmlns="http://www.w3.org/1999/xhtml">
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">

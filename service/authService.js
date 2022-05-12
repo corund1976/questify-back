@@ -51,15 +51,15 @@ class AuthService {
       subject: SUBJECT,
       text: TEXT_VERSION,
       html: HTML_VERSION,
-      trackingSettings: {
-        clickTracking: {
-          enable: false,
-          enableText: false
-        },
-        openTracking: {
-          enable: false
-        }
-      }
+      // trackingSettings: {
+      //   clickTracking: {
+      //     enable: false,
+      //     enableText: false
+      //   },
+      //   openTracking: {
+      //     enable: false
+      //   }
+      // }
     };
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -184,17 +184,25 @@ class AuthService {
 
     await user.save();
 
-    const mail = forgotPasswordEmail(
+    const TO_ADDRESS = email;
+    const FROM_NAME = 'Questify Support Team'
+    const FROM_ADDRESS = process.env.SENDGRID_SENDER_EMAIL;
+    const SUBJECT = 'Reset Password!';
+    const TEXT_VERSION = `Here is Your verification link - ${process.env.CLIENT_URL}/api/users/change-password/${resetLink}`;
+    const HTML_VERSION = forgotPasswordEmail(
       `${process.env.CLIENT_URL}/api/users/change-password/${resetLink}`,
       user.name
     );
 
     const msg = {
-      to: email,
-      from: process.env.SENDGRID_SENDER_EMAIL,
-      subject: "Reset Password!",
-      text: `Here is Your verification link - ${process.env.CLIENT_URL}/api/users/change-password/${resetLink}`,
-      html: mail,
+      to: TO_ADDRESS,
+      from: {
+        name: FROM_NAME,
+        email: FROM_ADDRESS,
+      },
+      subject: SUBJECT,
+      text: TEXT_VERSION,
+      html: HTML_VERSION,
     };
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);

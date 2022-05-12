@@ -224,7 +224,7 @@ class AuthService {
   }
 
   async confirmHost(link) {
-    const confirmation = jwt.decode(link, process.env.JWT_AGREE_SECRET);
+    const confirmation = jwt.decode(link, process.env.JWT_CONFIRM_HOST_SECRET);
     const email = confirmation.split("-")[0];
     const answer = confirmation.split("-")[1];
     console.log("email", email);
